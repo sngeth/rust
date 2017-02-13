@@ -507,11 +507,11 @@ impl<'f, 'gcx, 'tcx> Coerce<'f, 'gcx, 'tcx> {
 
     fn coerce_from_safe_fn(&self,
                            a: Ty<'tcx>,
-                           fn_ty_a: &'tcx ty::BareFnTy<'tcx>,
+                           fn_ty_a: ty::PolyFnSig<'tcx>,
                            b: Ty<'tcx>)
                            -> CoerceResult<'tcx> {
         if let ty::TyFnPtr(fn_ty_b) = b.sty {
-            match (fn_ty_a.unsafety, fn_ty_b.unsafety) {
+            match (fn_ty_a.unsafety(), fn_ty_b.unsafety()) {
                 (hir::Unsafety::Normal, hir::Unsafety::Unsafe) => {
                     let unsafe_a = self.tcx.safe_to_unsafe_fn_ty(fn_ty_a);
                     return self.unify_and_identity(unsafe_a, b)
@@ -525,7 +525,7 @@ impl<'f, 'gcx, 'tcx> Coerce<'f, 'gcx, 'tcx> {
 
     fn coerce_from_fn_pointer(&self,
                               a: Ty<'tcx>,
-                              fn_ty_a: &'tcx ty::BareFnTy<'tcx>,
+                              fn_ty_a: ty::PolyFnSig<'tcx>,
                               b: Ty<'tcx>)
                               -> CoerceResult<'tcx> {
         //! Attempts to coerce from the type of a Rust function item
@@ -540,7 +540,7 @@ impl<'f, 'gcx, 'tcx> Coerce<'f, 'gcx, 'tcx> {
 
     fn coerce_from_fn_item(&self,
                            a: Ty<'tcx>,
-                           fn_ty_a: &'tcx ty::BareFnTy<'tcx>,
+                           fn_ty_a: ty::PolyFnSig<'tcx>,
                            b: Ty<'tcx>)
                            -> CoerceResult<'tcx> {
         //! Attempts to coerce from the type of a Rust function item
